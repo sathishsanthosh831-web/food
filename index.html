@@ -1,142 +1,304 @@
 <!DOCTYPE html>
-<html>
+<html lang="ta">
 <head>
-    <title>joro Foods - Tiruchengode</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joro Food - Order Online</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
-            min-height: 100vh;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+            background: #f8f9fa; 
+            padding: 20px;
         }
         .header {
-            background: linear-gradient(90deg, #fc8019 0%, #ff5e62 100%);
-            color: white;
-            padding: 25px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
         }
-        .header h1 {
-            margin: 0;
-            font-size: 32px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        .header h1 { color: #00b050; font-size: 32px; }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto;
         }
-        .header p {
-            margin: 5px 0 0 0;
-            font-size: 14px;
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
-        .container {
-            max-width: 500px;
-            margin: 20px auto;
-            padding: 0 10px;
-        }
-        .food-card {
+        .card {
             background: white;
-            border-radius: 20px;
-            margin: 20px 0;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-radius: 16px;
             overflow: hidden;
-            transition: transform 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
         }
-        .food-card:hover {
-            transform: translateY(-5px);
-        }
-        .food-card img {
+        .card:hover { transform: translateY(-5px); }
+        .card img {
             width: 100%;
             height: 200px;
             object-fit: cover;
         }
-        .food-info {
-            padding: 20px;
+        .card-body { padding: 20px; }
+        .card h3 { margin-bottom: 8px; color: #333; }
+        .card .price { 
+            font-size: 24px; 
+            font-weight: bold; 
+            color: #00b050; 
+            margin: 10px 0;
         }
-        .food-info h2 {
-            margin: 0 0 10px 0;
-            color: #fc8019;
-            font-size: 24px;
-        }
-        .food-info p {
-            margin: 0 0 15px 0;
-            color: #666;
-        }
-        .price {
-            font-size: 28px;
-            font-weight: bold;
-            color: #60b246;
-            margin-bottom: 15px;
-        }
-        .order-btn {
-            display: block;
+        .card button {
             width: 100%;
-            background: linear-gradient(90deg, #60b246 0%, #4a9c35 100%);
+            padding: 12px;
+            background: #00b050;
             color: white;
-            padding: 15px;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 4px 10px rgba(96, 178, 70, 0.4);
+            cursor: pointer;
         }
-        .order-btn:hover {
-            background: linear-gradient(90deg, #4a9c35 0%, #3d8029 100%);
-        }
-        .footer {
-            background: #282c3f;
-            color: white;
-            text-align: center;
+        .card button:hover { background: #009040; }
+        .card button:disabled { background: #ccc; }
+        
+        /* Order Form Popup */
+        #orderPopup {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 9998;
             padding: 20px;
-            margin-top: 40px;
         }
-        .footer a {
-            color: #fc8019;
-            text-decoration: none;
-            font-weight: bold;
+        #orderBox {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 450px;
+            width: 100%;
+        }
+        #orderBox h2 { margin-bottom: 20px; text-align: center; }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        input:focus, textarea:focus { outline: none; border-color: #00b050; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-group button { flex: 1; padding: 14px; }
+        .btn-cancel { background: #666 !important; }
+        
+        /* QR Popup */
+        #qrPopup {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+        #qrBox {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 400px;
+        }
+        #qrcode { margin: 20px auto; }
+        .success {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🍴 joro Foods</h1>
-        <p>Tiruchengode | Home Delivery Available</p>
-    </div>
-
     <div class="container">
-        <div class="food-card">
-           <img src="fesh-dum-biryani-main.webp" alt="Chicken Biryani">
-            <div class="food-info">
-                <h2>Chicken Biryani</h2>
-                <p>Authentic Hyderabadi style with raita & gravy</p>
-                <div class="price">₹180</div>
-                <a class="order-btn" href="upi://pay?pa=sathishsanthosh831@oksbi&pn=Aswin Foods&am=180&cu=INR&tn=Chicken Biryani">Order Now 🍗</a>
-            </div>
+        <div class="header">
+            <h1>🍛 Joro Food</h1>
+            <p>Fresh ah, Suda suda ungal veetuku</p>
         </div>
 
-        <div class="food-card">
-            <img src="IndianTandooriPaneer.jpg" alt="Tandoori Paneer Pizza">
-            <div class="food-info">
-                <h2>Veg Cheese Pizza</h2>
-                <p>Loaded with cheese, capsicum, onion & corn</p>
-                <div class="price">₹220</div>
-                <a class="order-btn" href="upi://pay?pa=sathishsanthosh831@oksbi&pn=Aswin Foods&am=220&cu=INR&tn=Veg Cheese Pizza">Order Now 🍕</a>
+        <div class="products">
+            <!-- Item 1 -->
+            <div class="card">
+                <img src="images/biryani.jpg" alt="Chicken Biryani">
+                <div class="card-body">
+                    <h3>Chicken Biryani</h3>
+                    <p>Spicy & tasty basmati biryani</p>
+                    <div class="price">₹250</div>
+                    <button onclick="openOrderForm('Chicken Biryani', 250)">Order Now</button>
+                </div>
             </div>
-        </div>
 
-        <div class="food-card">
-            <img src="fried-chicken-patty-burger-png.webp" alt="Fried Chicken Burger">
-            <div class="food-info">
-                <h2>Chicken Burger</h2>
-                <p>Juicy chicken patty with fresh veggies & mayo</p>
-                <div class="price">₹120</div>
-                <a class="order-btn" href="upi://pay?pa=sathishsanthosh831@oksbi&pn=Aswin Foods&am=120&cu=INR&tn=Chicken Burger">Order Now 🍔</a>
+            <!-- Item 2 -->
+            <div class="card">
+                <img src="images/pizza.jpg" alt="Tandoori Paneer Pizza">
+                <div class="card-body">
+                    <h3>Tandoori Paneer Pizza</h3>
+                    <p>Cheesy tandoori paneer topping</p>
+                    <div class="price">₹350</div>
+                    <button onclick="openOrderForm('Tandoori Paneer Pizza', 350)">Order Now</button>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="card">
+                <img src="images/burger.jpg" alt="Fried Chicken Burger">
+                <div class="card-body">
+                    <h3>Fried Chicken Burger</h3>
+                    <p>Crispy chicken with special sauce</p>
+                    <div class="price">₹180</div>
+                    <button onclick="openOrderForm('Fried Chicken Burger', 180)">Order Now</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="footer">
-        <p><b>Payment mudinjavudane address ah WhatsApp pannunga:</b></p>
-        <p><a href="https://wa.me/919XXXXXXXXX">📱 9XXXXXXXXX</a></p>
-        <p style="font-size:12px; margin-top:15px;">© 2026 joro Foods/p>
+    <!-- Order Form Popup -->
+    <div id="orderPopup">
+        <div id="orderBox">
+            <h2 id="orderItemName">Order Details</h2>
+            <input type="text" id="name" placeholder="Customer Name" required>
+            <input type="tel" id="phone" placeholder="Phone Number" required>
+            <textarea id="address" placeholder="Delivery Address" rows="3" required></textarea>
+            <div class="success" id="success">Order placed! Check Firebase for details.</div>
+            <div class="btn-group">
+                <button class="btn-cancel" onclick="closeOrderForm()">Cancel</button>
+                <button onclick="confirmPayment()" id="payBtn">Pay Now</button>
+            </div>
+        </div>
     </div>
+
+    <!-- QR Code Popup -->
+    <div id="qrPopup">
+        <div id="qrBox">
+            <h2>Scan to Pay <span id="qrAmount"></span></h2>
+            <div id="qrcode"></div>
+            <p><b>UPI ID:</b> sathishsanthosh831@okicici</p>
+            <p><b>Order ID:</b> <span id="orderId"></span></p>
+            <p style="font-size: 14px; color: #666; margin-top: 10px;">Pay panni mudichavudane Close amukavum</p>
+            <button onclick="closeQR()" style="margin-top: 20px; background: #666; width: auto; padding: 10px 30px;">Close</button>
+        </div>
+    </div>
+
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB3wCTSReGF8mJbWVNHmEQSFANVLmSepyI",
+            authDomain: "joro-food.firebaseapp.com",
+            projectId: "joro-food",
+            storageBucket: "joro-food.firebasestorage.app",
+            messagingSenderId: "1029234978026",
+            appId: "1:1029234978026:web:c073cbe0f34e8a9c87b93",
+            measurementId: "G-4Y0GQBN786"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const UPI_ID = "sathishsanthosh831@okicici";
+        let currentItem = "";
+        let currentAmount = 0;
+        let currentOrderId = "";
+
+        window.openOrderForm = function(itemName, amount) {
+            currentItem = itemName;
+            currentAmount = amount;
+            document.getElementById('orderItemName').textContent = `${itemName} - ₹${amount}`;
+            document.getElementById('payBtn').textContent = `Pay ₹${amount}`;
+            document.getElementById('orderPopup').style.display = 'flex';
+            document.getElementById('success').style.display = 'none';
+        }
+
+        window.closeOrderForm = function() {
+            document.getElementById('orderPopup').style.display = 'none';
+            document.getElementById('name').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('address').value = '';
+        }
+
+        window.confirmPayment = async function() {
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const address = document.getElementById('address').value.trim();
+
+            if (!name || !phone || !address) {
+                alert('Ellam fill pannunga da!');
+                return;
+            }
+
+            document.getElementById('payBtn').disabled = true;
+            document.getElementById('payBtn').textContent = 'Processing...';
+
+            currentOrderId = 'JORO' + Date.now();
+            document.getElementById('orderId').textContent = currentOrderId;
+            document.getElementById('qrAmount').textContent = `₹${currentAmount}`;
+
+            try {
+                await addDoc(collection(db, "orders"), {
+                    orderId: currentOrderId,
+                    item: currentItem,
+                    name: name,
+                    phone: phone,
+                    address: address,
+                    amount: currentAmount,
+                    status: "pending",
+                    createdAt: serverTimestamp()
+                });
+
+                document.getElementById('success').style.display = 'block';
+                
+                setTimeout(() => {
+                    document.getElementById('orderPopup').style.display = 'none';
+                    
+                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                    const upiLink = `upi://pay?pa=${UPI_ID}&pn=Joro%20Food&am=${currentAmount}&cu=INR&tn=${currentOrderId}-${currentItem}`;
+
+                    if (isMobile) {
+                        window.location.href = upiLink;
+                    } else {
+                        document.getElementById('qrPopup').style.display = 'flex';
+                        document.getElementById('qrcode').innerHTML = '';
+                        new QRCode(document.getElementById('qrcode'), {
+                            text: upiLink,
+                            width: 250,
+                            height: 250
+                        });
+                    }
+                }, 1000);
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('payBtn').disabled = false;
+                document.getElementById('payBtn').textContent = `Pay ₹${currentAmount}`;
+            }
+        }
+
+        window.closeQR = function() {
+            document.getElementById('qrPopup').style.display = 'none';
+            document.getElementById('payBtn').disabled = false;
+            closeOrderForm();
+        }
+    </script>
 </body>
 </html>
