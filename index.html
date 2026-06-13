@@ -61,7 +61,6 @@
         .card button:hover { background: #009040; }
         .card button:disabled { background: #ccc; }
         
-        /* Order Form Popup */
         #orderPopup {
             display: none;
             position: fixed;
@@ -94,7 +93,6 @@
         .btn-group button { flex: 1; padding: 14px; }
         .btn-cancel { background: #666 !important; }
         
-        /* QR Popup */
         #qrPopup {
             display: none;
             position: fixed;
@@ -133,7 +131,6 @@
         </div>
 
         <div class="products">
-            <!-- Item 1 -->
             <div class="card">
                 <img src="images/biryani.jpg" alt="Chicken Biryani">
                 <div class="card-body">
@@ -144,7 +141,6 @@
                 </div>
             </div>
 
-            <!-- Item 2 -->
             <div class="card">
                 <img src="images/pizza.jpg" alt="Tandoori Paneer Pizza">
                 <div class="card-body">
@@ -155,7 +151,6 @@
                 </div>
             </div>
 
-            <!-- Item 3 -->
             <div class="card">
                 <img src="images/burger.jpg" alt="Fried Chicken Burger">
                 <div class="card-body">
@@ -165,10 +160,19 @@
                     <button onclick="openOrderForm('Fried Chicken Burger', 180)">Order Now</button>
                 </div>
             </div>
+
+            <div class="card">
+                <img src="images/dosa.jpg" alt="Dosa">
+                <div class="card-body">
+                    <h3>Dosa</h3>
+                    <p>Murugal dosa with sambar & chutney</p>
+                    <div class="price">₹5</div>
+                    <button onclick="openOrderForm('Dosa', 5)">Order Now</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Order Form Popup -->
     <div id="orderPopup">
         <div id="orderBox">
             <h2 id="orderItemName">Order Details</h2>
@@ -183,7 +187,6 @@
         </div>
     </div>
 
-    <!-- QR Code Popup -->
     <div id="qrPopup">
         <div id="qrBox">
             <h2>Scan to Pay <span id="qrAmount"></span></h2>
@@ -195,10 +198,8 @@
         </div>
     </div>
 
-    <!-- QR Code Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
-    <!-- Firebase -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
@@ -275,9 +276,9 @@
                     const upiLink = `upi://pay?pa=${UPI_ID}&pn=Joro%20Food&am=${currentAmount}&cu=INR&tn=${currentOrderId}-${currentItem}`;
 
                     if (isMobile) {
-                        window.location.href = upiLink;
+                        window.location.href = upiLink; // Phone = Direct GPay open
                     } else {
-                        document.getElementById('qrPopup').style.display = 'flex';
+                        document.getElementById('qrPopup').style.display = 'flex'; // Laptop = QR kaatum
                         document.getElementById('qrcode').innerHTML = '';
                         new QRCode(document.getElementById('qrcode'), {
                             text: upiLink,
