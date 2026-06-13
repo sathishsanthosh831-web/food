@@ -11,15 +11,9 @@
             background: #f8f9fa; 
             padding: 20px;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+        .header { text-align: center; margin-bottom: 30px; }
         .header h1 { color: #00b050; font-size: 32px; }
-        .container { 
-            max-width: 1200px; 
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
         .products {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -31,22 +25,11 @@
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
         }
-        .card:hover { transform: translateY(-5px); }
-        .card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
+        .card img { width: 100%; height: 200px; object-fit: cover; }
         .card-body { padding: 20px; }
         .card h3 { margin-bottom: 8px; color: #333; }
-        .card .price { 
-            font-size: 24px; 
-            font-weight: bold; 
-            color: #00b050; 
-            margin: 10px 0;
-        }
+        .card .price { font-size: 24px; font-weight: bold; color: #00b050; margin: 10px 0; }
         .card button {
             width: 100%;
             padding: 12px;
@@ -59,41 +42,8 @@
             cursor: pointer;
         }
         .card button:hover { background: #009040; }
-        .card button:disabled { background: #ccc; }
         
-        #orderPopup {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: center;
-            z-index: 9998;
-            padding: 20px;
-        }
-        #orderBox {
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            max-width: 450px;
-            width: 100%;
-        }
-        #orderBox h2 { margin-bottom: 20px; text-align: center; }
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-        input:focus, textarea:focus { outline: none; border-color: #00b050; }
-        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-group button { flex: 1; padding: 14px; }
-        .btn-cancel { background: #666 !important; }
-        
-        #qrPopup {
+        .popup {
             display: none;
             position: fixed;
             top: 0; left: 0;
@@ -104,13 +54,52 @@
             z-index: 9999;
             padding: 20px;
         }
-        #qrBox {
+        .popup-box {
             background: white;
             padding: 30px;
             border-radius: 16px;
+            max-width: 450px;
+            width: 100%;
             text-align: center;
-            max-width: 400px;
         }
+        .popup-box h2 { margin-bottom: 20px; }
+        
+        .pay-options { display: flex; gap: 15px; margin: 20px 0; }
+        .pay-options button {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #00b050;
+            border-radius: 10px;
+            background: white;
+            color: #00b050;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .pay-options button:hover { background: #00b050; color: white; }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: left;
+        }
+        input:focus, textarea:focus { outline: none; border-color: #00b050; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-group button { 
+            flex: 1; 
+            padding: 14px; 
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-submit { background: #00b050; color: white; }
+        .btn-cancel { background: #666; color: white; }
+        
         #qrcode { margin: 20px auto; }
         .success {
             display: none;
@@ -119,7 +108,6 @@
             padding: 15px;
             border-radius: 8px;
             margin-top: 15px;
-            text-align: center;
         }
     </style>
 </head>
@@ -137,7 +125,7 @@
                     <h3>Chicken Biryani</h3>
                     <p>Spicy & tasty basmati biryani</p>
                     <div class="price">₹250</div>
-                    <button onclick="openOrderForm('Chicken Biryani', 250)">Order Now</button>
+                    <button onclick="selectPayment('Chicken Biryani', 250)">Order Now</button>
                 </div>
             </div>
 
@@ -147,7 +135,7 @@
                     <h3>Tandoori Paneer Pizza</h3>
                     <p>Cheesy tandoori paneer topping</p>
                     <div class="price">₹350</div>
-                    <button onclick="openOrderForm('Tandoori Paneer Pizza', 350)">Order Now</button>
+                    <button onclick="selectPayment('Tandoori Paneer Pizza', 350)">Order Now</button>
                 </div>
             </div>
 
@@ -157,7 +145,7 @@
                     <h3>Fried Chicken Burger</h3>
                     <p>Crispy chicken with special sauce</p>
                     <div class="price">₹180</div>
-                    <button onclick="openOrderForm('Fried Chicken Burger', 180)">Order Now</button>
+                    <button onclick="selectPayment('Fried Chicken Burger', 180)">Order Now</button>
                 </div>
             </div>
 
@@ -167,34 +155,45 @@
                     <h3>Dosa</h3>
                     <p>Murugal dosa with sambar & chutney</p>
                     <div class="price">₹5</div>
-                    <button onclick="openOrderForm('Dosa', 5)">Order Now</button>
+                    <button onclick="selectPayment('Dosa', 5)">Order Now</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="orderPopup">
-        <div id="orderBox">
-            <h2 id="orderItemName">Order Details</h2>
+    <div id="paymentPopup" class="popup">
+        <div class="popup-box">
+            <h2 id="popupItemName">Select Payment Method</h2>
+            <p>₹<span id="popupAmount"></span> pay panna method choose pannu</p>
+            <div class="pay-options">
+                <button onclick="showForm('phone')">📱 Pay via Phone<br><small>GPay/PhonePe</small></button>
+                <button onclick="showForm('qr')">📷 Pay via QR<br><small>Scan & Pay</small></button>
+            </div>
+            <button class="btn-cancel" onclick="closePaymentPopup()" style="width:100%;margin-top:10px;">Cancel</button>
+        </div>
+    </div>
+
+    <div id="formPopup" class="popup">
+        <div class="popup-box">
+            <h2 id="formTitle">Customer Details</h2>
             <input type="text" id="name" placeholder="Customer Name" required>
             <input type="tel" id="phone" placeholder="Phone Number" required>
             <textarea id="address" placeholder="Delivery Address" rows="3" required></textarea>
-            <div class="success" id="success">Order placed! Check Firebase for details.</div>
+            <div class="success" id="success">Order placed! Processing...</div>
             <div class="btn-group">
-                <button class="btn-cancel" onclick="closeOrderForm()">Cancel</button>
-                <button onclick="confirmPayment()" id="payBtn">Pay Now</button>
+                <button class="btn-cancel" onclick="closeFormPopup()">Back</button>
+                <button class="btn-submit" onclick="submitOrder()" id="submitBtn">Submit</button>
             </div>
         </div>
     </div>
 
-    <div id="qrPopup">
-        <div id="qrBox">
-            <h2>Scan to Pay <span id="qrAmount"></span></h2>
+    <div id="qrPopup" class="popup">
+        <div class="popup-box">
+            <h2>Scan to Pay ₹<span id="qrAmount"></span></h2>
             <div id="qrcode"></div>
             <p><b>UPI ID:</b> sathishsanthosh831@okicici</p>
             <p><b>Order ID:</b> <span id="orderId"></span></p>
-            <p style="font-size: 14px; color: #666; margin-top: 10px;">Pay panni mudichavudane Close amukavum</p>
-            <button onclick="closeQR()" style="margin-top: 20px; background: #666; width: auto; padding: 10px 30px;">Close</button>
+            <button class="btn-cancel" onclick="closeQR()" style="margin-top: 20px; width: 100%;">Close</button>
         </div>
     </div>
 
@@ -220,25 +219,37 @@
         const UPI_ID = "sathishsanthosh831@okicici";
         let currentItem = "";
         let currentAmount = 0;
-        let currentOrderId = "";
+        let paymentMethod = "";
 
-        window.openOrderForm = function(itemName, amount) {
+        window.selectPayment = function(itemName, amount) {
             currentItem = itemName;
             currentAmount = amount;
-            document.getElementById('orderItemName').textContent = `${itemName} - ₹${amount}`;
-            document.getElementById('payBtn').textContent = `Pay ₹${amount}`;
-            document.getElementById('orderPopup').style.display = 'flex';
+            document.getElementById('popupItemName').textContent = itemName;
+            document.getElementById('popupAmount').textContent = amount;
+            document.getElementById('paymentPopup').style.display = 'flex';
+        }
+
+        window.closePaymentPopup = function() {
+            document.getElementById('paymentPopup').style.display = 'none';
+        }
+
+        window.showForm = function(method) {
+            paymentMethod = method;
+            document.getElementById('paymentPopup').style.display = 'none';
+            document.getElementById('formTitle').textContent = method === 'phone' ? 'Pay via Phone - Details' : 'Pay via QR - Details';
+            document.getElementById('formPopup').style.display = 'flex';
             document.getElementById('success').style.display = 'none';
         }
 
-        window.closeOrderForm = function() {
-            document.getElementById('orderPopup').style.display = 'none';
+        window.closeFormPopup = function() {
+            document.getElementById('formPopup').style.display = 'none';
+            document.getElementById('paymentPopup').style.display = 'flex';
             document.getElementById('name').value = '';
             document.getElementById('phone').value = '';
             document.getElementById('address').value = '';
         }
 
-        window.confirmPayment = async function() {
+        window.submitOrder = async function() {
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const address = document.getElementById('address').value.trim();
@@ -248,21 +259,35 @@
                 return;
             }
 
-            document.getElementById('payBtn').disabled = true;
-            document.getElementById('payBtn').textContent = 'Processing...';
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = 'Processing...';
 
-            currentOrderId = 'JORO' + Date.now();
-            document.getElementById('orderId').textContent = currentOrderId;
-            document.getElementById('qrAmount').textContent = `₹${currentAmount}`;
+            const orderId = 'JORO' + Date.now();
+            const upiLink = `upi://pay?pa=${UPI_ID}&pn=Joro%20Food&am=${currentAmount}&cu=INR&tn=${orderId}-${currentItem}`;
+
+            // IDHU RENDU OPTION LAYUM CONSOLE LA PRINT AAGUM
+            console.log('========== NEW ORDER ==========');
+            console.log('Order ID:', orderId);
+            console.log('Item:', currentItem);
+            console.log('Amount: ₹' + currentAmount);
+            console.log('Customer Name:', name);
+            console.log('Phone:', phone);
+            console.log('Address:', address);
+            console.log('Payment Method:', paymentMethod === 'phone' ? 'Phone - GPay' : 'QR Code');
+            console.log('UPI Link:', upiLink);
+            console.log('Time:', new Date().toLocaleString());
+            console.log('===============================');
 
             try {
+                // IDHU RENDU OPTION LAYUM FIREBASE KU POGUM
                 await addDoc(collection(db, "orders"), {
-                    orderId: currentOrderId,
+                    orderId: orderId,
                     item: currentItem,
                     name: name,
                     phone: phone,
                     address: address,
                     amount: currentAmount,
+                    paymentMethod: paymentMethod, // Idhu pudhu field - phone ah QR ah nu kaatum
                     status: "pending",
                     createdAt: serverTimestamp()
                 });
@@ -270,15 +295,18 @@
                 document.getElementById('success').style.display = 'block';
                 
                 setTimeout(() => {
-                    document.getElementById('orderPopup').style.display = 'none';
+                    document.getElementById('formPopup').style.display = 'none';
                     
-                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                    const upiLink = `upi://pay?pa=${UPI_ID}&pn=Joro%20Food&am=${currentAmount}&cu=INR&tn=${currentOrderId}-${currentItem}`;
-
-                    if (isMobile) {
-                        window.location.href = upiLink; // Phone = Direct GPay open
+                    if (paymentMethod === 'phone') {
+                        // PHONE OPTION: Direct GPay open
+                        console.log('>>> Opening GPay for Order:', orderId);
+                        window.location.href = upiLink;
                     } else {
-                        document.getElementById('qrPopup').style.display = 'flex'; // Laptop = QR kaatum
+                        // QR OPTION: QR code kaatu
+                        console.log('>>> Showing QR Code for Order:', orderId);
+                        document.getElementById('qrAmount').textContent = currentAmount;
+                        document.getElementById('orderId').textContent = orderId;
+                        document.getElementById('qrPopup').style.display = 'flex';
                         document.getElementById('qrcode').innerHTML = '';
                         new QRCode(document.getElementById('qrcode'), {
                             text: upiLink,
@@ -286,19 +314,25 @@
                             height: 250
                         });
                     }
+                    
+                    // Reset form
+                    document.getElementById('name').value = '';
+                    document.getElementById('phone').value = '';
+                    document.getElementById('address').value = '';
+                    document.getElementById('submitBtn').disabled = false;
+                    document.getElementById('submitBtn').textContent = 'Submit';
                 }, 1000);
 
             } catch (error) {
                 alert('Error: ' + error.message);
-                document.getElementById('payBtn').disabled = false;
-                document.getElementById('payBtn').textContent = `Pay ₹${currentAmount}`;
+                console.error('Order Error:', error);
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('submitBtn').textContent = 'Submit';
             }
         }
 
         window.closeQR = function() {
             document.getElementById('qrPopup').style.display = 'none';
-            document.getElementById('payBtn').disabled = false;
-            closeOrderForm();
         }
     </script>
 </body>
